@@ -16,9 +16,24 @@ struct ResultView: View {
            Color.yellow
             VStack{
             Text("You Lose")
-            Button(action: {showResultView = false
+                    .font(.largeTitle)
+                    .bold()
+                    .foregroundColor(.black)
+                    .padding()
+                    .background(Color.white)
+            Button(action: {
+                showResultView = false
+                
             }, label: {
                 Text("再來一局")
+                    .font(.largeTitle)
+                    .bold()
+                    .foregroundColor(.black)
+                    .padding()
+                    .background(Color.white)
+                    .overlay(
+                        Rectangle()
+                            .stroke(Color.black, lineWidth: 5))
             })
         }
         }

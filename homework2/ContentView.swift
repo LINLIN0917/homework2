@@ -6,6 +6,38 @@
 //
 
 import SwiftUI
+var cards = [Card]()//製造52張牌
+var computerCard = [Card]()//電腦手牌
+var playerCard = [Card]()//玩家手牌
+var count = 10//目前抽到張數
+let suits = ["Clubs","Diamonds","Hearts","Spades"]
+let ranks = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
+             "12", "13"]
+func creatCards() -> [Card] {
+    for suit in suits{
+        for rank in ranks{
+            var card = Card()
+            card.suit = suit
+            card.rank = rank
+            cards.append(card)
+        }
+    }
+    cards.shuffle()//洗牌
+    return cards
+}
+func creatPlayerCards()->[Card]{
+    playerCard.append(contentsOf: cards[0...10])
+    //0~4player 5~9computer
+    count = 10
+    return playerCard
+}
+func shuffleCard()->[Card]{
+    cards.shuffle()
+    for index in 0...10 {
+        playerCard[index] = cards[index]
+    }
+    return playerCard
+}
 
 
 struct ContentView: View {
@@ -18,34 +50,14 @@ struct ContentView: View {
     @State private var result = 0
     @State private var round = 0
     @State private var point = 0//99的點數
-    @State var count = 10//目前抽到張數
-    @State var cards = [Card]()//製造52張牌
-    @State var computerCard = [Card]()//電腦手牌
-    @State var playerCard = [Card]()//玩家手牌
+    
+    
     @State private var choose20 = true
     @State private var choose10 = true
     @State private var gameStart = false
-    let suits = ["Clubs","Diamonds","Hearts","Spades"]
-    let ranks = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
-                 "12", "13"]
-    func creatCards() -> [Card] {
-        for suit in suits{
-            for rank in ranks{
-                var card = Card()
-                card.suit = suit
-                card.rank = rank
-                cards.append(card)
-            }
-        }
-        cards.shuffle()//洗牌
-        return cards
-    }
     
-    func creatPlayerCards()->[Card]{
-        playerCard.append(contentsOf: cards[0...10])
-        //0~4player 5~9computer
-        return playerCard
-    }
+    
+    
     func playerAdd( count: inout Int,x:Int)->(Card){
         playerCard[x] = cards[count]
         count += 1
@@ -56,6 +68,9 @@ struct ContentView: View {
             count = 0
             cards.shuffle()
         }
+        
+            
+        
         if x != 5{
             if point > 99{
             coin-=100
@@ -64,25 +79,26 @@ struct ContentView: View {
             }
             else{
                 point = 0
+                count = 10
+                shuffleCard()
                 showResultView = true
                 gameStart = false
-                
-                
-            }
-        }
-        }
-        if x == 5{
-            if point > 99{
-                coin+=100
-                gameStart = false
-                point = 0
-                showWinView = true
-
-                
+                                
                 
             }
         }
-        
+        }
+        else{
+        if point > 99{
+            coin+=100
+            point = 0
+            count = 10
+            shuffleCard()
+            gameStart = false
+            showWinView = true
+            
+        }
+        }
         return (cards,win)
     }
     func game99(x:Int){
@@ -206,6 +222,7 @@ struct ContentView: View {
         }
         else{
             ZStack {
+                
                 Image("background")
                     .resizable()
                     .scaledToFill()
@@ -346,6 +363,7 @@ struct ContentView: View {
                         VStack{
                             Button(action: {choose20 = true
                                 point+=20
+                                check(count: &count,point: &point,x: 0)
                                 computerAdd()
                                 check(count: &count,point: &point,x: 5)
                                 
@@ -366,6 +384,7 @@ struct ContentView: View {
                                 if point<0 {
                                     point = 0
                                 }
+                                check(count: &count,point: &point,x: 0)
                                 computerAdd()
                                 check(count: &count,point: &point,x: 5)
                             }, label: {
@@ -385,6 +404,7 @@ struct ContentView: View {
                         VStack{
                             Button(action: {choose10 = true
                                 point += 10
+                                check(count: &count,point: &point,x: 0)
                                 computerAdd()
                                 check(count: &count,point: &point,x: 5)
                             }, label: {
@@ -403,6 +423,7 @@ struct ContentView: View {
                                 if point<0 {
                                     point = 0
                                 }
+                                check(count: &count,point: &point,x: 0)
                                 computerAdd()
                                 check(count: &count,point: &point,x: 5)
                             }, label: {
@@ -419,16 +440,11 @@ struct ContentView: View {
                         }
                         
                     }
+                EmptyView().sheet(isPresented: $showResultView, content: {ResultView(showResultView: $showResultView)})
+                EmptyView().sheet(isPresented: $showWinView, content: {WinView(showWinView: $showWinView)})
+                EmptyView().sheet(isPresented:$showGameOverView, content: {GameOverView(showGameOverView: $showGameOverView)})
                 
                 }.edgesIgnoringSafeArea(.all)
-        EmptyView().sheet(isPresented: $showWinView, content: {
-        WinView(showWinView: $showWinView)})
-            EmptyView().sheet(isPresented: $showResultView, content: {
-                                            ResultView(showResultView: $showResultView)})
-                    
-                    EmptyView().sheet(isPresented: $showGameOverView, content: {
-                        GameOverView(showGameOverView: $showGameOverView)
-            })
                 
         }
             }

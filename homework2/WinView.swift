@@ -10,14 +10,28 @@ import SwiftUI
 struct WinView: View {
     @Binding var showWinView:Bool
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
         ZStack {
            Color.yellow
             VStack{
-            Text("You Lose")
-            Button(action: {showWinView = false
+            Text("You Win")
+                    .font(.largeTitle)
+                    .bold()
+                    .foregroundColor(.black)
+                    .padding()
+                    .background(Color.white)
+            Button(action: {
+                showWinView = false
+                
             }, label: {
                 Text("再來一局")
+                    .font(.largeTitle)
+                    .bold()
+                    .foregroundColor(.black)
+                    .padding()
+                    .background(Color.white)
+                    .overlay(
+                        Rectangle()
+                            .stroke(Color.black, lineWidth: 5))
             })
         }
         }
